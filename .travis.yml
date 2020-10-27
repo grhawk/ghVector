@@ -1,0 +1,24 @@
+language: cpp
+sudo: required
+dist: bionic
+compiler: 
+- clang
+os:
+- linux
+before_install:
+- echo $LANG
+- echo $LC_ALL
+- apt-get install -y make cmake 
+script:
+- mkdir build
+- cd build
+- cmake ..
+- make
+- make test
+branches:
+  only:
+  - main
+
+global:
+- LANG="en_US.UTF-8"
+
