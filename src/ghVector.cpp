@@ -1,18 +1,20 @@
 #include "ghVector.h"
+#include <string>
 
 template<typename T>
-ghds::uint ghds::Vector<T>::size() const {
+ghds::uint ghds::Vector<T>::size() const noexcept {
     return m_size;
 }
 
 template<typename T>
-void ghds::Vector<T>::push_back(T value) {
+void ghds::Vector<T>::push_back(T value) noexcept {
     if (m_size < m_capacity) {
         m_array[m_size] = value;
         m_size++;
     } else {
-        ghds::uint new_capacity = m_capacity + (m_capacity / 2);
+        ghds::uint new_capacity = computeNewCapacity();
         T* new_array = new T[new_capacity];
+        std::memcpy (new_array, m_array, m_size * sizeof(T));
         for (ghds::uint i = 0; i < m_size; i++){
             new_array[i] = m_array[i];
         }
@@ -22,6 +24,11 @@ void ghds::Vector<T>::push_back(T value) {
         m_array[m_size] = value;
         m_size++;
     }
+}
+
+template<typename T>
+ghds::uint ghds::Vector<T>::computeNewCapacity() const {
+    return this->m_capacity + (this->m_capacity / 2);;
 }
 
 template<typename T>
@@ -46,23 +53,22 @@ ghds::Vector<T>::~Vector() {
 }
 
 template<typename T>
-ghds::uint ghds::Vector<T>::capacity() {
+ghds::uint ghds::Vector<T>::capacity() const noexcept {
     return m_capacity;
 }
 
 template<typename T>
 void ghds::Vector<T>::insert(ghds::uint position, T value) {
+    if (position >= m_size)
+        throw std::exception();
     ghds::uint new_capacity = m_capacity;
-    if(m_size == m_capacity){
-        new_capacity = m_capacity + (m_capacity / 2);
-    }
+    if(m_size == m_capacity)
+        new_capacity = computeNewCapacity();
     T* new_array = new T[new_capacity];
-    for(ghds::uint i = 0; i < position; i++)
-        new_array[i] = m_array[i];
+    std::memcpy(new_array, m_array, (position) * sizeof(T));
     new_array[position] = value;
     m_size++;
-    for (ghds::uint i = (position+1); i < m_size; i++)
-        new_array[i] = m_array[i-1];
+    std::memcpy(&new_array[position+1], &m_array[position], (m_size - position) * sizeof(T));
 
     delete [] m_array;
     m_array = new_array;

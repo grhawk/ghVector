@@ -9,18 +9,20 @@ namespace ghds {
     public:
         Vector();
         ~Vector();
-        uint size() const;
-        void push_back(T value);
+        uint size() const noexcept;
+        void push_back(T value) noexcept;
         T operator[](uint i) const;
         T& operator[](uint i);
         void insert(uint position, T value);
-
-        ghds::uint capacity();
+        ghds::uint capacity() const noexcept;
 
     private:
         uint m_size = 0;
         uint m_capacity = 2;
         T* m_array;
+
+    private:
+        uint computeNewCapacity() const;
     };
 
 }
