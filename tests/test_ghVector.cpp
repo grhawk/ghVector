@@ -1,6 +1,9 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 #include<gtest/gtest.h>
 
 #include<ghVector.h>
+#include "testObjects.cpp"
 
 TEST(VectorFix, CreateADummyVectorObj){
     ghds::Vector<int> vector = ghds::Vector<int>();
@@ -142,4 +145,16 @@ TEST(VectorFix, PushManyElementsToVectorAndInsertOneMoreInTheMiddle)
     ASSERT_EQ(vector.size(), 205);
 }
 
+/*
+ * Testing number of copy needed
+ */
+TEST(VectorOfVectors, GenerateAVectorOfVectors)
+{
+  SimpleVector3 v31 = SimpleVector3();
+  ghds::Vector<SimpleVector3> vector = ghds::Vector<SimpleVector3>();
+  vector.push_back(v31);
 
+
+}
+
+#pragma clang diagnostic pop
