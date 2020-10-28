@@ -31,7 +31,7 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 
-add_executable(${PROJECT_NAME} vector.cpp)
+add_executable(${PROJECT_NAME} test_ghVector.cpp)
 target_link_libraries(${PROJECT_NAME} gtest_main ${PROJECT})
 
 gtest_discover_tests(${PROJECT_NAME})

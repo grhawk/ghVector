@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0.0)
 set(PROJECT ghVector)
 
 project(${PROJECT} VERSION 0.1.0)
+set(CMAKE_CXX_STANDARD 11)
 
 enable_testing()
 include(GoogleTest)
