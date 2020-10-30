@@ -148,17 +148,53 @@ TEST(VectorFix, PushManyElementsToVectorAndInsertOneMoreInTheMiddle)
 /*
  * Testing number of copy needed
  */
-TEST(VectorOfVectors, GenerateAVectorOfVectors)
+TEST(VectorOfVectors, TestVectorInVector)
 {
-    initializeMonitoringMap();
-    SimpleVector3 v31 = SimpleVector3(1.0, 1.0, 1.0);
-    SimpleVector3 v32 = v31;
-    SimpleVector3 v33 = std::move(v31);
-    v33.printMonitoringMap();
-    ASSERT_EQ(v33.getCalls()["calls to copy"], 1);
-    ASSERT_EQ(v33.getCalls()["calls to floats"], 1);
-    ASSERT_EQ(v33.getCalls()["calls to move"], 1);
-    ASSERT_EQ(v33.getCalls()["calls to default"], 0);
+    SimpleVector3::initializeMonitoringMap();
+    SimpleVector3 v31 = SimpleVector3(1.0, 1.0, 1.0); // floats constructor
+    SimpleVector3 v32 = v31; // copy constructor
+    SimpleVector3 v33 = std::move(v31); // move constructor
+    SimpleVector3 v34; // default constructor
+    v34 = v32; // copy operator
+    v34 = std::move(v32); // move operator
+    SimpleVector3::printMonitoringMap();
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to copy operator"], 1);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to move operator"], 1);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to copy constructor"], 1);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to floats constructor"], 1);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to move constructor"], 1);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to default constructor"], 1);
+}
+
+TEST(VectorOfVectors, GenerateAVectorOfVectorsWithoutReallocation)
+{
+    SimpleVector3::initializeMonitoringMap();
+    ghds::Vector<SimpleVector3> v = ghds::Vector<SimpleVector3>();
+    v.push_back(SimpleVector3(1.0, 1.0, 2.0));
+    v.push_back(SimpleVector3(1.0, 1.0, 2.0));
+    SimpleVector3::printMonitoringMap();
+    ASSERT_EQ(v[0].x(), 1.0);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to copy constructor"], 0);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to floats constructor"], 2);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to move constructor"], 0);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to default constructor"], 2);
+}
+
+TEST(VectorOfVectors, GenerateAVectorOfVectorsWithReallocation)
+{
+    SimpleVector3::initializeMonitoringMap();
+    ghds::Vector<SimpleVector3> v = ghds::Vector<SimpleVector3>();
+    v.push_back(SimpleVector3(1.0, 1.0, 2.0));
+    v.push_back(SimpleVector3(2.0, 1.0, 2.0));
+    v.push_back(SimpleVector3(3.0, 1.0, 2.0));
+    SimpleVector3::printMonitoringMap();
+    ASSERT_EQ(v[0].x(), 1.0);
+    ASSERT_EQ(v[1].x(), 2.0);
+    ASSERT_EQ(v[2].x(), 3.0);
+//    ASSERT_EQ(SimpleVector3::calls_list()["calls to copy"], 0);
+//    ASSERT_EQ(SimpleVector3::calls_list()["calls to floats"], 2);
+//    ASSERT_EQ(SimpleVector3::calls_list()["calls to move"], 0);
+//    ASSERT_EQ(SimpleVector3::calls_list()["calls to default"], 2);
 }
 
 #pragma clang diagnostic pop

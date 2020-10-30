@@ -27,9 +27,9 @@ namespace ghds {
                 ghds::uint new_capacity = computeNewCapacity();
                 T* new_array = new T[new_capacity];
                 std::memcpy(new_array, m_array, m_size * sizeof(T));
-                for (ghds::uint i = 0; i < m_size; i++) {
-                    new_array[i] = m_array[i];
-                }
+//                for (ghds::uint i = 0; i < m_size; i++) {
+//                    new_array[i] = m_array[i];
+//                }
                 delete[] m_array;
                 m_capacity = new_capacity;
                 m_array = new_array;
