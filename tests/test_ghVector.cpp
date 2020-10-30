@@ -153,6 +153,9 @@ TEST(VectorOfVectors, TestVectorInVector)
     SimpleVector3::initializeMonitoringMap();
     SimpleVector3 v31 = SimpleVector3(1.0, 1.0, 1.0); // floats constructor
     SimpleVector3 v32 = v31; // copy constructor
+    v32.x(2.0);
+    ASSERT_EQ(v32.x(), 2.0);
+    ASSERT_EQ(v31.x(), 1.0);
     SimpleVector3 v33 = std::move(v31); // move constructor
     SimpleVector3 v34; // default constructor
     v34 = v32; // copy operator
@@ -171,9 +174,10 @@ TEST(VectorOfVectors, GenerateAVectorOfVectorsWithoutReallocation)
     SimpleVector3::initializeMonitoringMap();
     ghds::Vector<SimpleVector3> v = ghds::Vector<SimpleVector3>();
     v.push_back(SimpleVector3(1.0, 1.0, 2.0));
-    v.push_back(SimpleVector3(1.0, 1.0, 2.0));
+    v.push_back(SimpleVector3(2.0, 1.0, 2.0));
     SimpleVector3::printMonitoringMap();
     ASSERT_EQ(v[0].x(), 1.0);
+    ASSERT_EQ(v[1].x(), 2.0);
     ASSERT_EQ(SimpleVector3::calls_list()["calls to copy constructor"], 0);
     ASSERT_EQ(SimpleVector3::calls_list()["calls to floats constructor"], 2);
     ASSERT_EQ(SimpleVector3::calls_list()["calls to move constructor"], 0);
@@ -187,14 +191,48 @@ TEST(VectorOfVectors, GenerateAVectorOfVectorsWithReallocation)
     v.push_back(SimpleVector3(1.0, 1.0, 2.0));
     v.push_back(SimpleVector3(2.0, 1.0, 2.0));
     v.push_back(SimpleVector3(3.0, 1.0, 2.0));
+    v[0].print();
+    v[1].print();
+    v[2].print();
     SimpleVector3::printMonitoringMap();
     ASSERT_EQ(v[0].x(), 1.0);
     ASSERT_EQ(v[1].x(), 2.0);
     ASSERT_EQ(v[2].x(), 3.0);
-//    ASSERT_EQ(SimpleVector3::calls_list()["calls to copy"], 0);
-//    ASSERT_EQ(SimpleVector3::calls_list()["calls to floats"], 2);
-//    ASSERT_EQ(SimpleVector3::calls_list()["calls to move"], 0);
-//    ASSERT_EQ(SimpleVector3::calls_list()["calls to default"], 2);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to copy constructor"], 0);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to floats constructor"], 3);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to move constructor"], 0);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to copy operator"], 0);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to move operator"], 5);
+}
+
+TEST(VectorOfVectors, GenerateAVectorOfVectorsWithReallocationAndMixtRAndLValue)
+{
+    SimpleVector3::initializeMonitoringMap();
+    ghds::Vector<SimpleVector3> v = ghds::Vector<SimpleVector3>();
+    SimpleVector3 v3a = SimpleVector3(100.0, 0.0, 2.0);
+    SimpleVector3 v3b = SimpleVector3(200.0, 0.0, 2.0);
+    v.push_back(SimpleVector3(1.0, 1.0, 2.0));
+    v.push_back(SimpleVector3(2.0, 1.0, 2.0));
+    v.push_back(SimpleVector3(3.0, 1.0, 2.0));
+    v.push_back(v3a);
+    v.push_back(std::move(v3b));
+    v[0].print();
+    v[1].print();
+    v[2].print();
+    v[3].print();
+    v[4].print();
+    SimpleVector3::printMonitoringMap();
+    ASSERT_EQ(v[0].x(), 1.0);
+    ASSERT_EQ(v[1].x(), 2.0);
+    ASSERT_EQ(v[2].x(), 3.0);
+    ASSERT_EQ(v[3].x(), 100.0);
+    ASSERT_EQ(v3a.x(), 100.0);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to default constructor"], 15);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to copy constructor"], 1);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to floats constructor"], 5);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to move constructor"], 1);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to copy operator"], 0);
+    ASSERT_EQ(SimpleVector3::calls_list()["calls to move operator"], 14);
 }
 
 #pragma clang diagnostic pop

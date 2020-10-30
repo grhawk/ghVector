@@ -21,19 +21,18 @@ namespace ghds {
 
         void push_back(T value) noexcept {
             if (m_size < m_capacity) {
-                m_array[m_size] = value;
+                m_array[m_size] = std::move(value);
                 m_size++;
             } else {
                 ghds::uint new_capacity = computeNewCapacity();
                 T* new_array = new T[new_capacity];
-                std::memcpy(new_array, m_array, m_size * sizeof(T));
-//                for (ghds::uint i = 0; i < m_size; i++) {
-//                    new_array[i] = m_array[i];
-//                }
+                for (ghds::uint i = 0; i < m_size; i++) {
+                    new_array[i] = std::move(m_array[i]);
+                }
                 delete[] m_array;
                 m_capacity = new_capacity;
                 m_array = new_array;
-                m_array[m_size] = value;
+                m_array[m_size] = std::move(value);
                 m_size++;
             }
         }
@@ -46,7 +45,7 @@ namespace ghds {
                 : m_array{new T[m_capacity]} {
         }
 
-        Vector(T value) {
+        explicit Vector(T value) {
             m_array = new T[m_capacity];
             push_back(value);
         }
@@ -70,10 +69,12 @@ namespace ghds {
             if (m_size == m_capacity)
                 new_capacity = computeNewCapacity();
             T* new_array = new T[new_capacity];
-            std::memcpy(new_array, m_array, (position) * sizeof(T));
+            for (ghds::uint i = 0; i < position; i++)
+                new_array[i] = std::move(m_array[i]);
             new_array[position] = value;
             m_size++;
-            std::memcpy(&new_array[position + 1], &m_array[position], (m_size - position) * sizeof(T));
+            for (ghds::uint i = (position + 1); i < m_size; i++)
+                new_array[i] = std::move(m_array[i - 1]);
 
             delete[] m_array;
             m_array = new_array;
@@ -84,7 +85,6 @@ namespace ghds {
         uint computeNewCapacity() const {
             return this->m_capacity + (this->m_capacity / 2);;
         }
-
     };
 }
 

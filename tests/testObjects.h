@@ -41,6 +41,9 @@ public:
     float x() const noexcept {return m_data[0];}
     float y() const noexcept {return m_data[1];}
     float z() const noexcept {return m_data[2];}
+    void x(float v) {m_data[0] = v;}
+    void y(float v) {m_data[1] = v;}
+    void z(float v) {m_data[2] = v;}
 
     SimpleVector3(){
         std::cout << "CALL DEFAULT CONSTRUCTOR" << std::endl;
@@ -90,7 +93,6 @@ public:
         if (this != &other) {
             delete[] m_data;        // if this vector was in use, delete its memory.
             m_data = other.m_data;  // reassign the pointer;
-            delete[] other.m_data;  // delete the other. memeory
             other.m_data = nullptr;
         }
         return *this;
