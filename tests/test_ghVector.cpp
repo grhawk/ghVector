@@ -2,8 +2,8 @@
 #pragma ide diagnostic ignored "cert-err58-cpp"
 #include<gtest/gtest.h>
 
-#include<ghVector.h>
-#include "testObjects.cpp"
+#include<ghVector.cpp>
+#include "testObjects.h"
 
 TEST(VectorFix, CreateADummyVectorObj){
     ghds::Vector<int> vector = ghds::Vector<int>();
@@ -150,11 +150,15 @@ TEST(VectorFix, PushManyElementsToVectorAndInsertOneMoreInTheMiddle)
  */
 TEST(VectorOfVectors, GenerateAVectorOfVectors)
 {
-  SimpleVector3 v31 = SimpleVector3();
-  ghds::Vector<SimpleVector3> vector = ghds::Vector<SimpleVector3>();
-  vector.push_back(v31);
-
-
+    initializeMonitoringMap();
+    SimpleVector3 v31 = SimpleVector3(1.0, 1.0, 1.0);
+    SimpleVector3 v32 = v31;
+    SimpleVector3 v33 = std::move(v31);
+    v33.printMonitoringMap();
+    ASSERT_EQ(v33.getCalls()["calls to copy"], 1);
+    ASSERT_EQ(v33.getCalls()["calls to floats"], 1);
+    ASSERT_EQ(v33.getCalls()["calls to move"], 1);
+    ASSERT_EQ(v33.getCalls()["calls to default"], 0);
 }
 
 #pragma clang diagnostic pop

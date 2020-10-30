@@ -2,9 +2,18 @@
 #include <iostream>
 #include <vector>
 #include <unistd.h>
-
+#include <unordered_map>
 int main () 
 {
+  auto map = std::unordered_map<std::string, int>();
+  map["sti cazzi"] = 0;
+  std::cout << map["sti cazzi"] << std::endl;
+  map["sti cazzi"]++;
+  std::cout << map["sti cazzi"] << std::endl;
+
+
+
+#if 0
     int size = 20;
     int repetition = 500;
     int* data = new int[size];
@@ -18,7 +27,7 @@ int main ()
 
     int* p = &data[10];
 
-#if 0
+
     for (int j= 0; j < repetition; j++) {
         auto start = std::chrono::high_resolution_clock::now();
         for (int i = 0; i < size; i++) {
