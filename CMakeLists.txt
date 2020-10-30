@@ -9,7 +9,7 @@ enable_testing()
 include(GoogleTest)
 add_subdirectory(tests)
 
-add_library(${PROJECT} src/ghVector.cpp src/ghVector.h)
+add_library(${PROJECT} src/ghVector.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
