@@ -3,6 +3,11 @@ cmake_minimum_required(VERSION 3.0.0)
 # Set the name of the parent project followed by `-tests`
 project(${PROJECT_NAME}-tests VERSION 0.1.0)
 
+# To perform memory profiling.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer")
+
+# Configure gtest
 configure_file(${CMAKE_SOURCE_DIR}/tests/gtest.cmake googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
                 RESULT_VARIABLE result
